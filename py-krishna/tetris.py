@@ -29,7 +29,7 @@ while running:
             temp = current_piece[0][:] 
             grid[y][5].clear()
             y+=1
-            grid[y][5] = temp
+            grid[y][5] = temp #huedhei
     pygame.display.flip()
     clock.tick(10)
     
