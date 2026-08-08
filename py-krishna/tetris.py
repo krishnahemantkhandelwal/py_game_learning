@@ -15,6 +15,7 @@ colors = [(255,0,0), (0,255,0), (0,0,255), (255,255,0), (255,0,255), (0, 255, 25
 def xy_calc(gridx, gridy, width=30, height=30):
     return (((gridx-1)*30), ((gridy-1)*30), width, height)
 y = 1
+current_piece = [[5, y, random.choice(colors), 1]] #x, y, color, speed
 grid[y][5] = [5, y, random.choice(colors)]
 #--------------------------------------------------------------------#
 while running:
@@ -25,7 +26,7 @@ while running:
     pygame.draw.rect(screen, grid[y][5][2], xy_calc(5, y))
     if y!=20:
         if grid[y+1][5] == []:
-            temp = grid[y][5][:]
+            temp = current_piece[0][:] 
             grid[y][5].clear()
             y+=1
             grid[y][5] = temp
