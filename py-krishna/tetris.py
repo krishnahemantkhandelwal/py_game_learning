@@ -16,7 +16,7 @@ colors = [(255,0,0), (0,255,0), (0,0,255), (255,255,0), (255,0,255), (0, 255, 25
 def xy_calc(gridx, gridy, width=30, height=30):
     return (((gridx-1)*30), ((gridy-1)*30), width, height)
 def add_piece(xy:list, speed=1):
-    return [xy, random.choice(colors), speed]
+    return [xy, random.choice(colors), speed, [5,1]]
 
 shape = {
     "O": {
@@ -68,8 +68,9 @@ shape = {
         4: np.array([1, 1]),
     }
 }
-rand_piece = random.choice(["O", "I", "T", "S", "Z", "J", "L"])
-current_piece = [[shape[rand_piece][1]+[5, 1], shape[rand_piece][2]+[5, 1], shape[rand_piece][3]+[5, 1], shape[rand_piece][4]+[5, 1]], random.choice(colors), 1] #x, y, color, speed
+rand_piece =  "O"   #random.choice(["O", "I", "T", "S", "Z", "J", "L"])
+#current_piece = [[shape[rand_piece][1]+[5, 1], shape[rand_piece][2]+[5, 1], shape[rand_piece][3]+[5, 1], shape[rand_piece][4]+[5, 1]], random.choice(colors), 1] #x, y, color, speed
+current_piece = [[shape[rand_piece][1], shape[rand_piece][2], shape[rand_piece][3], shape[rand_piece][4]], random.choice(colors), 1, [5,1]] #x, y, color, speed
 def rotate(x, y):
     return [y, -x]
 #-------------------------------------------------------------------------------------------#
@@ -77,28 +78,47 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        if event.type == pygame.K_UP:
-            pass
+        if event.type == pygame.KEYDOWN:
+            if current_piece != []:
+                if event.key == pygame.K_UP:
+                    old_pos = current_piece[0][:]
+                    for i in range(4):
+                        current_piece[0][i] = rotate(current_piece[0][i][0], current_piece[0][i][1])
+                        if  1 >= current_piece[0][i][1] >= 20 or 1 >= current_piece[0][i][0] >= 10:
+                            current_piece[0] = old_pos
+                            break
 #---------------------------------------------------------------------#
     screen.fill((0, 0, 0))
     if current_piece == []:
         rand_piece = random.choice(["O", "I", "T", "S", "Z", "J", "L"])
-        current_piece = add_piece([shape[rand_piece][1]+[5, 1], shape[rand_piece][2]+[5, 1], shape[rand_piece][3]+[5, 1], shape[rand_piece][4]+[5, 1]])
+        current_piece = add_piece([shape[rand_piece][1], shape[rand_piece][2], shape[rand_piece][3], shape[rand_piece][4]])
     if current_piece != []:
         for i in current_piece[0][:]:
-            pygame.draw.rect(screen, current_piece[1], xy_calc(i[0], i[1]))
-            pygame.draw.rect(screen, (0, 0, 0), xy_calc(i[0], i[1]), 3)
+            pygame.draw.rect(screen, current_piece[1], xy_calc(i[0]+current_piece[3][0], i[1]+current_piece[3][1]))
+            pygame.draw.rect(screen, (0, 0, 0), xy_calc(i[0]+current_piece[3][0], i[1]+current_piece[3][1]), 3)
     for i in range(21):
         for j in range(11):
             if grid[i][j] != []:
                 pygame.draw.rect(screen, grid[i][j][0], xy_calc(j,i))
                 pygame.draw.rect(screen, (0, 0, 0), xy_calc(j, i), 3)
-    if current_piece != [] and (current_piece[0][2][1]!=len(grid)-1 and current_piece[0][3][1]!=len(grid)-1) and (grid[current_piece[0][2][1]+1][current_piece[0][2][0]] == [] and grid[current_piece[0][3][1]+1][current_piece[0][3][0]] == []):
-        for i in current_piece[0][:]:
-            i[1] += current_piece[2]
+    moving_condition = current_piece != []
+    if moving_condition:
+        for i in range(len(current_piece[0])):
+            if current_piece[0][i][1]+current_piece[3][1]==len(grid)-1:
+                moving_condition = False
+                break
+    if moving_condition:
+        for i in range(len(current_piece[0])):
+            if  grid[current_piece[0][i][1]+current_piece[3][1]+1][current_piece[0][i][0]+current_piece[3][0]] != []:
+                moving_condition = False
+                break
+    if moving_condition: #and current_piece != [] and (current_piece[0][0][1]+current_piece[3][1]!=len(grid)-1 and current_piece[0][1][1]+current_piece[3][1]!=len(grid)-1 and current_piece[0][2][1]+current_piece[3][1]!=len(grid)-1 and current_piece[0][3][1]+current_piece[3][1]!=len(grid)-1) and (grid[current_piece[0][0][1]+current_piece[3][1]+1][current_piece[0][0][0]+current_piece[3][0]] == [] and grid[current_piece[0][1][1]+current_piece[3][1]+1][current_piece[0][1][0]+current_piece[3][0]] == [] and grid[current_piece[0][2][1]+current_piece[3][1]+1][current_piece[0][2][0]+current_piece[3][0]] == [] and grid[current_piece[0][3][1]+current_piece[3][1]+1][current_piece[0][3][0]+current_piece[3][0]] == []):
+        current_piece[3][1] += current_piece[2]
+        # for i in current_piece[0][:]:
+        #     i[1] += current_piece[2]
     elif current_piece != []:
         for i in current_piece[0][:]:
-            grid[i[1]][i[0]].append(current_piece[1])
+            grid[i[1]+current_piece[3][1]][i[0]+current_piece[3][0]].append(current_piece[1])
         current_piece.clear()
     pygame.display.flip()
     clock.tick(10)
