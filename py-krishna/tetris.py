@@ -156,7 +156,27 @@ while running:
             for i in current_piece[0][:]:
                 grid[i[1]+current_piece[3][1]][i[0]+current_piece[3][0]].append(current_piece[1])
             current_piece.clear()
+    line_clear = []
+    for i in range(len(grid)):
+        line = True
+        for j in range(len(grid[i])):
+            if grid[i][j] == []:
+                line = False
+                break
+        if line:
+            line_clear.append(i)
+    for i in range(len(line_clear)):
+        for j in range(len(grid[i])):
+            pygame.draw.rect(screen, (212, 175, 55), xy_calc(j,i))
+    for i in line_clear[:]:
+        for j in range(len(grid[i])):
+            grid[i][j].clear()
+    for i in line_clear[:]:
+        for j in grid[:i:-1][:]:
+            for k in j[:]:
+                pass                
+
     pygame.display.flip()
-    clock.tick(10)
+    clock.tick(7)
     
 pygame.quit()
