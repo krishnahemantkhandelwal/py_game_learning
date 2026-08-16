@@ -171,11 +171,25 @@ while running:
     for i in line_clear[:]:
         for j in range(len(grid[i])):
             grid[i][j].clear()
+    # for i in line_clear[:]:
+    #     for j in grid[:i:-1][:]:
+    #         for k in j[:]:
+    #             pass
+    # stop_loop = False    
+    # for i in line_clear[:]:
+    #     for j in range(len(grid)-1, i, -1):
+    #         for k in grid[j][:]:
+    #             if grid[j][k] != []:
+    #                 temp = grid[j][k][:]
+    #                 grid[j][k].clear()
+    #                 grid[j][k+1].append(temp)
     for i in line_clear[:]:
-        for j in grid[:i:-1][:]:
-            for k in j[:]:
-                pass                
-
+        new_grid = grid[:]
+        for j in range(i+1, len(grid), 1):
+            temp = grid[j]
+            new_grid[j].clear()
+            new_grid[j+1] = new_grid[j]
+        grid = new_grid
     pygame.display.flip()
     clock.tick(7)
     
