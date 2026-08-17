@@ -183,13 +183,9 @@ while running:
     #                 temp = grid[j][k][:]
     #                 grid[j][k].clear()
     #                 grid[j][k+1].append(temp)
-    for i in line_clear[:]:
-        new_grid = grid[:]
-        for j in range(i+1, len(grid), 1):
-            temp = grid[j]
-            new_grid[j].clear()
-            new_grid[j+1] = new_grid[j]
-        grid = new_grid
+    for i in reversed(line_clear):
+        grid.pop(i)
+        grid.insert(0, [[] for _ in range(11)])
     pygame.display.flip()
     clock.tick(7)
     
