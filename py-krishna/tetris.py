@@ -69,8 +69,7 @@ shape = {
     }
 }
 rand_piece = random.choice(["O", "I", "T", "S", "Z", "J", "L"])
-#current_piece = [[shape[rand_piece][1]+[5, 1], shape[rand_piece][2]+[5, 1], shape[rand_piece][3]+[5, 1], shape[rand_piece][4]+[5, 1]], random.choice(colors), 1] #x, y, color, speed
-current_piece = [[shape[rand_piece][1], shape[rand_piece][2], shape[rand_piece][3], shape[rand_piece][4]], random.choice(colors), 1, [5,1]] #x, y, color, speed
+current_piece = [[shape[rand_piece][1], shape[rand_piece][2], shape[rand_piece][3], shape[rand_piece][4]], random.choice(colors), 1, [5,1]]
 def rotate(x, y):
     return [y, -x]
 def move(direction, current):
@@ -79,25 +78,16 @@ def move(direction, current):
     else:
         movement = -1
     move_condn = True
-    # for i in range(len(current[0])):
-    #     if grid[current[0][i][1]+current[3][1]][current[0][i][0]+current[3][0]+movement] != []:
-    #         move_condn = False
-    #         break
     for i in range(len(current[0])):
         if 1 > current[0][i][0]+current[3][0]+movement or current[0][i][0]+current[3][0]+movement > 10:
             move_condn = False
             break
-        # if current[0][i][0]+current[3][0] == 10:
-        #     if direction == "right":
-        #         move_condn = False
-        #         break
     if move_condn:
             for i in range(len(current[0])):
                 if grid[current[0][i][1]+current[3][1]][current[0][i][0]+current[3][0]+movement] != []:
                     move_condn = False
                     break
     return move_condn
-#-------------------------------------------------------------------------------------------#
 while running:
     fast_move = 1
     for event in pygame.event.get():
@@ -122,7 +112,6 @@ while running:
                 current_piece[3][0] += -1
         if keys[pygame.K_DOWN]:
             fast_move = 2
-#---------------------------------------------------------------------#
     screen.fill((0, 0, 0))
     if current_piece == []:
         rand_piece = random.choice(["O", "I", "T", "S", "Z", "J", "L"])
@@ -150,8 +139,6 @@ while running:
                     break
         if moving_condition:
             current_piece[3][1] += current_piece[2]
-            # for i in current_piece[0][:]:
-            #     i[1] += current_piece[2]
         elif current_piece != []:
             for i in current_piece[0][:]:
                 grid[i[1]+current_piece[3][1]][i[0]+current_piece[3][0]].append(current_piece[1])
@@ -172,11 +159,6 @@ while running:
     for i in reversed(line_clear):
         grid.pop(i)
         grid.insert(0, [[] for _ in range(11)])
-    # for i in range(21):
-    #     for j in range(11):
-    #         if grid[i][j] != []:
-    #             pygame.draw.rect(screen, grid[i][j][0], xy_calc(j,i))
-    #             pygame.draw.rect(screen, (0, 0, 0), xy_calc(j, i), 3)
     
     pygame.display.flip()
     clock.tick(7)
