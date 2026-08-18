@@ -130,12 +130,12 @@ while running:
     if current_piece != []:
         for i in current_piece[0][:]:
             pygame.draw.rect(screen, current_piece[1], xy_calc(i[0]+current_piece[3][0], i[1]+current_piece[3][1]))
-            pygame.draw.rect(screen, (0, 0, 0), xy_calc(i[0]+current_piece[3][0], i[1]+current_piece[3][1]), 3)
+            pygame.draw.rect(screen, (0, 0, 0), xy_calc(i[0]+current_piece[3][0], i[1]+current_piece[3][1]), 2)
     for i in range(21):
         for j in range(11):
             if grid[i][j] != []:
                 pygame.draw.rect(screen, grid[i][j][0], xy_calc(j,i))
-                pygame.draw.rect(screen, (0, 0, 0), xy_calc(j, i), 3)
+                pygame.draw.rect(screen, (0, 0, 0), xy_calc(j, i), 2)
     for _ in range(fast_move):
         moving_condition = current_piece != []
         if moving_condition:
@@ -148,7 +148,7 @@ while running:
                 if  grid[current_piece[0][i][1]+current_piece[3][1]+1][current_piece[0][i][0]+current_piece[3][0]] != []:
                     moving_condition = False
                     break
-        if moving_condition: #and current_piece != [] and (current_piece[0][0][1]+current_piece[3][1]!=len(grid)-1 and current_piece[0][1][1]+current_piece[3][1]!=len(grid)-1 and current_piece[0][2][1]+current_piece[3][1]!=len(grid)-1 and current_piece[0][3][1]+current_piece[3][1]!=len(grid)-1) and (grid[current_piece[0][0][1]+current_piece[3][1]+1][current_piece[0][0][0]+current_piece[3][0]] == [] and grid[current_piece[0][1][1]+current_piece[3][1]+1][current_piece[0][1][0]+current_piece[3][0]] == [] and grid[current_piece[0][2][1]+current_piece[3][1]+1][current_piece[0][2][0]+current_piece[3][0]] == [] and grid[current_piece[0][3][1]+current_piece[3][1]+1][current_piece[0][3][0]+current_piece[3][0]] == []):
+        if moving_condition:
             current_piece[3][1] += current_piece[2]
             # for i in current_piece[0][:]:
             #     i[1] += current_piece[2]
@@ -159,33 +159,25 @@ while running:
     line_clear = []
     for i in range(len(grid)):
         line = True
-        for j in range(len(grid[i])):
+        for j in range(1, 11):
             if grid[i][j] == []:
                 line = False
                 break
         if line:
             line_clear.append(i)
-    for i in range(len(line_clear)):
+
+    for i in line_clear:
         for j in range(len(grid[i])):
-            pygame.draw.rect(screen, (212, 175, 55), xy_calc(j,i))
-    for i in line_clear[:]:
-        for j in range(len(grid[i])):
-            grid[i][j].clear()
-    # for i in line_clear[:]:
-    #     for j in grid[:i:-1][:]:
-    #         for k in j[:]:
-    #             pass
-    # stop_loop = False    
-    # for i in line_clear[:]:
-    #     for j in range(len(grid)-1, i, -1):
-    #         for k in grid[j][:]:
-    #             if grid[j][k] != []:
-    #                 temp = grid[j][k][:]
-    #                 grid[j][k].clear()
-    #                 grid[j][k+1].append(temp)
+            pygame.draw.rect(screen, (212, 175, 55), xy_calc(j, i))
     for i in reversed(line_clear):
         grid.pop(i)
         grid.insert(0, [[] for _ in range(11)])
+    # for i in range(21):
+    #     for j in range(11):
+    #         if grid[i][j] != []:
+    #             pygame.draw.rect(screen, grid[i][j][0], xy_calc(j,i))
+    #             pygame.draw.rect(screen, (0, 0, 0), xy_calc(j, i), 3)
+    
     pygame.display.flip()
     clock.tick(7)
     
