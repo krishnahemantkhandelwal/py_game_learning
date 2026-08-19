@@ -68,7 +68,7 @@ shape = {
         4: np.array([1, 1]),
     }
 }
-rand_piece = random.choice(["O", "I", "T", "S", "Z", "J", "L"])
+rand_piece = random.choice(["I"])#, "O", "T", "S", "Z", "J", "L"])
 current_piece = [[shape[rand_piece][1], shape[rand_piece][2], shape[rand_piece][3], shape[rand_piece][4]], random.choice(colors), 1, [5,1]]
 def rotate(x, y):
     return [y, -x]
@@ -88,6 +88,7 @@ def move(direction, current):
                     move_condn = False
                     break
     return move_condn
+#-----------------------------------------------------------------------------------------------------------------------------------------------#
 while running:
     fast_move = 1
     for event in pygame.event.get():
@@ -99,7 +100,7 @@ while running:
                     old_pos = current_piece[0][:]
                     for i in range(4):
                         current_piece[0][i] = rotate(current_piece[0][i][0], current_piece[0][i][1])
-                        if  1 >= current_piece[0][i][1] >= 20 or 1 >= current_piece[0][i][0] >= 10:
+                        if (current_piece[0][i][1]+current_piece[3][1] < 0 or current_piece[0][i][1]+current_piece[3][1] > 20 or current_piece[0][i][0]+current_piece[3][0] < 0 or current_piece[0][i][0]+current_piece[3][0] > 10) or grid[current_piece[0][i][1] + current_piece[3][1]][current_piece[0][i][0] + current_piece[3][0]] != []:
                             current_piece[0] = old_pos
                             break
     if current_piece != []:
@@ -113,8 +114,9 @@ while running:
         if keys[pygame.K_DOWN]:
             fast_move = 2
     screen.fill((0, 0, 0))
+#-------------------------------------------------------------------------------------------------------------------#
     if current_piece == []:
-        rand_piece = random.choice(["O", "I", "T", "S", "Z", "J", "L"])
+        rand_piece = random.choice(["I"])#, "O", "T", "S", "Z", "J", "L"])
         current_piece = add_piece([shape[rand_piece][1], shape[rand_piece][2], shape[rand_piece][3], shape[rand_piece][4]])
     if current_piece != []:
         for i in current_piece[0][:]:
