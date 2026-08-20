@@ -68,7 +68,7 @@ shape = {
         4: np.array([1, 1]),
     }
 }
-rand_piece = random.choice(["I"])#, "O", "T", "S", "Z", "J", "L"])
+rand_piece = random.choice(["I", "O", "T", "S", "Z", "J", "L"])
 current_piece = [[shape[rand_piece][1], shape[rand_piece][2], shape[rand_piece][3], shape[rand_piece][4]], random.choice(colors), 1, [5,1]]
 def rotate(x, y):
     return [y, -x]
@@ -88,9 +88,11 @@ def move(direction, current):
                     move_condn = False
                     break
     return move_condn
+fps = 20
+block_move_timer = 0
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 while running:
-    fast_move = 1
+    fast_move = False
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -100,7 +102,7 @@ while running:
                     old_pos = current_piece[0][:]
                     for i in range(4):
                         current_piece[0][i] = rotate(current_piece[0][i][0], current_piece[0][i][1])
-                        if (current_piece[0][i][1]+current_piece[3][1] < 0 or current_piece[0][i][1]+current_piece[3][1] > 20 or current_piece[0][i][0]+current_piece[3][0] < 0 or current_piece[0][i][0]+current_piece[3][0] > 10) or grid[current_piece[0][i][1] + current_piece[3][1]][current_piece[0][i][0] + current_piece[3][0]] != []:
+                        if (current_piece[0][i][1]+current_piece[3][1] < 0 or current_piece[0][i][1]+current_piece[3][1] > 20 or current_piece[0][i][0]+current_piece[3][0] < 1 or current_piece[0][i][0]+current_piece[3][0] > 10) or grid[current_piece[0][i][1] + current_piece[3][1]][current_piece[0][i][0] + current_piece[3][0]] != []:
                             current_piece[0] = old_pos
                             break
     if current_piece != []:
@@ -112,11 +114,11 @@ while running:
             if move("left", current_piece):
                 current_piece[3][0] += -1
         if keys[pygame.K_DOWN]:
-            fast_move = 2
+            fast_move = True
     screen.fill((0, 0, 0))
 #-------------------------------------------------------------------------------------------------------------------#
     if current_piece == []:
-        rand_piece = random.choice(["I"])#, "O", "T", "S", "Z", "J", "L"])
+        rand_piece = random.choice(["I", "O", "T", "S", "Z", "J", "L"])
         current_piece = add_piece([shape[rand_piece][1], shape[rand_piece][2], shape[rand_piece][3], shape[rand_piece][4]])
     if current_piece != []:
         for i in current_piece[0][:]:
@@ -127,7 +129,7 @@ while running:
             if grid[i][j] != []:
                 pygame.draw.rect(screen, grid[i][j][0], xy_calc(j,i))
                 pygame.draw.rect(screen, (0, 0, 0), xy_calc(j, i), 2)
-    for _ in range(fast_move):
+    if block_move_timer % fps == 0 or fast_move:
         moving_condition = current_piece != []
         if moving_condition:
             for i in range(len(current_piece[0])):
@@ -161,8 +163,8 @@ while running:
     for i in reversed(line_clear):
         grid.pop(i)
         grid.insert(0, [[] for _ in range(11)])
-    
+    block_move_timer += 1
     pygame.display.flip()
-    clock.tick(7)
+    clock.tick(fps)
     
 pygame.quit()
