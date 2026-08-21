@@ -68,7 +68,7 @@ shape = {
         4: np.array([1, 1]),
     }
 }
-rand_piece = random.choice(["I", "O", "T", "S", "Z", "J", "L"])
+rand_piece = random.choice(["I"])#, "O", "T", "S", "Z", "J", "L"])
 current_piece = [[shape[rand_piece][1], shape[rand_piece][2], shape[rand_piece][3], shape[rand_piece][4]], random.choice(colors), 1, [5,1]]
 def rotate(x, y):
     return [y, -x]
@@ -90,6 +90,7 @@ def move(direction, current):
     return move_condn
 fps = 20
 block_move_timer = 0
+score = 0
 #-----------------------------------------------------------------------------------------------------------------------------------------------#
 while running:
     fast_move = False
@@ -118,7 +119,7 @@ while running:
     screen.fill((0, 0, 0))
 #-------------------------------------------------------------------------------------------------------------------#
     if current_piece == []:
-        rand_piece = random.choice(["I", "O", "T", "S", "Z", "J", "L"])
+        rand_piece = random.choice(["I"])#, "O", "T", "S", "Z", "J", "L"])
         current_piece = add_piece([shape[rand_piece][1], shape[rand_piece][2], shape[rand_piece][3], shape[rand_piece][4]])
     if current_piece != []:
         for i in current_piece[0][:]:
@@ -129,6 +130,8 @@ while running:
             if grid[i][j] != []:
                 pygame.draw.rect(screen, grid[i][j][0], xy_calc(j,i))
                 pygame.draw.rect(screen, (0, 0, 0), xy_calc(j, i), 2)
+    score_text = font.render(f"{score}", True, (255, 255, 255))
+    screen.blit(score_text, xy_calc(8, 1))
     if block_move_timer % fps == 0 or fast_move:
         moving_condition = current_piece != []
         if moving_condition:
@@ -146,23 +149,47 @@ while running:
         elif current_piece != []:
             for i in current_piece[0][:]:
                 grid[i[1]+current_piece[3][1]][i[0]+current_piece[3][0]].append(current_piece[1])
+            print("Landing")
             current_piece.clear()
-    line_clear = []
-    for i in range(len(grid)):
-        line = True
-        for j in range(1, 11):
-            if grid[i][j] == []:
-                line = False
-                break
-        if line:
-            line_clear.append(i)
+            print("Cleared Piece")
+            print("Checking lines")
+            line_clear = []
+            for i in range(len(grid)):
+                line = True
+                for j in range(1, 11):
+                    if grid[i][j] == []:
+                        line = False
+                        break
+                if line:
+                    line_clear.append(i)
 
-    for i in line_clear:
-        for j in range(len(grid[i])):
-            pygame.draw.rect(screen, (212, 175, 55), xy_calc(j, i))
-    for i in reversed(line_clear):
-        grid.pop(i)
-        grid.insert(0, [[] for _ in range(11)])
+            for i in line_clear:
+                for j in range(len(grid[i])):
+                    pygame.draw.rect(screen, (212, 175, 55), xy_calc(j, i))
+            if len(line_clear) == 1:
+                print("len:", len(line_clear))
+                print("score before update:", score)
+                score += 100
+                print("score after update:", score)
+            elif len(line_clear) == 2:
+                print("len:", len(line_clear))
+                print("score before update:", score)
+                score += 300
+                print("score after update:", score)
+            elif len(line_clear) == 3:
+                print("len:", len(line_clear))
+                print("score before update:", score)
+                score += 500
+                print("score after update:", score)
+            elif len(line_clear) == 4:
+                print("len:", len(line_clear))
+                print("score before update:", score)
+                score += 800
+                print("score after update:", score)
+            grid = [row for i, row in enumerate(grid) if i not in line_clear]
+            while len(grid) < 21:
+                grid.insert(0, [[] for _ in range(11)])
+            
     block_move_timer += 1
     pygame.display.flip()
     clock.tick(fps)
